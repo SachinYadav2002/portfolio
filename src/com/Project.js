@@ -22,7 +22,7 @@ function Project() {
   const [count, setCount] = useState(1);
   return (
     <div
-      id="Projects"
+      id="Project"
       className="md:w-[90%] w-[95%]  mx-auto  justify-center items-center bg-gradient-65 from-purple-300 to-pink-500 md:p-15 p-4 mt-4 rounded"
     >
       <div className="max-w-[2000px] xl:px-[150px] md:px-[30px] lg:px-[90px] sm:px-[20px] justify-center items-center md:flex">

@@ -34,15 +34,18 @@ const Introduction = () => {
             </span>
           </p>
           <div className="flex">
-            <button className="flex p-2 m-2 bg-gradient-65 from-cyan-400 to-blue-700 md:text-2xl rounded-2xl hover:scale-110 duration-6">
-              Say_Hello
-              <img className="h-6" src={Message} alt="" />
-            </button>
-
-            <button className="flex p-2 m-2 duration-6 bg-gradient-65 from-cyan-400 to-blue-700 rounded-2xl md:text-2xl hover:scale-110">
-              Explore_Project
-              <img className="h-6" src={Message} alt="" />
-            </button>
+            <a href="#Contact">
+              <button className="flex p-2 m-2 bg-gradient-65 from-cyan-400 to-blue-700 md:text-2xl rounded-2xl hover:scale-110 duration-6">
+                Contact_Me
+                <img className="h-6" src={Message} alt="" />
+              </button>
+            </a>
+            <a href="#Project">
+              <button className="flex p-2 m-2 duration-6 bg-gradient-65 from-cyan-400 to-blue-700 rounded-2xl md:text-2xl hover:scale-110">
+                Explore_Project
+                <img className="h-6" src={Message} alt="" />
+              </button>
+            </a>
           </div>
         </div>
         <div className="flex justify-center md:w-1/2 ">

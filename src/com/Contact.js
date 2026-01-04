@@ -7,7 +7,10 @@ import {
 
 function Contact() {
   return (
-    <div className="md:w-[90%] w-[95%]  mx-auto  justify-center items-center bg-gradient-65 from-purple-500 to-pink-800 md:p-15 p-4 mt-4 rounded mb-4 md:pl-20">
+    <div
+      id="Contact"
+      className="md:w-[90%] w-[95%]  mx-auto  justify-center items-center bg-gradient-65 from-purple-500 to-pink-800 md:p-15 p-4 mt-4 rounded mb-4 md:pl-20"
+    >
       <div className="">
         <div className="w-full pb-5 md:w-2/3">
           <h1 className="text-[#4C40F7] text-xl md:text-2xl ">
