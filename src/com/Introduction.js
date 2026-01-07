@@ -49,7 +49,7 @@ const Introduction = () => {
           </div>
         </div>
         <div className="flex justify-center md:w-1/2 ">
-          <img src={image} className="rounded-2xl h-[80vh] " alt="sachin" />
+          <img src={image} className="rounded-2xl " alt="sachin" />
         </div>
       </div>
     </div>

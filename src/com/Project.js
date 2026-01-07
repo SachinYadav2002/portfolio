@@ -9,16 +9,18 @@ const project = [
     img: project1,
     name: "Stock Smart",
     tech: "Next Js,Typescript,Tailwind CSS, Node Js,Mongo Db",
+    link: "https://stock-smart-next-js.vercel.app/",
   },
   {
     id: 2,
     img: project2,
     name: "Headphone",
-    tech: "React Js,Next Js,Tailwind CSS",
+    tech: "React Js,Tailwind CSS",
+    link: "https://headphone-six-sable.vercel.app/",
   },
 ];
 function Project() {
-  // const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
   const [count, setCount] = useState(1);
   return (
     <div
@@ -48,8 +50,8 @@ function Project() {
                 data.id === count ? (
                   <div
                     key={data.id}
-                    // onMouseEnter={() => setShow(true)}
-                    // onMouseLeave={() => setShow(false)}
+                    onMouseEnter={() => setShow(true)}
+                    onMouseLeave={() => setShow(false)}
                     className="rounded-md overflow-hidden relative flex-col flex justify-center items-center text-4xl text-[#4C40F7] transition-all duration-500 ease-in-out"
                   >
                     <img
@@ -61,8 +63,8 @@ function Project() {
                     />
                     <button
                       className="absolute right-0 z-50 mr-2"
-                      // onMouseEnter={() => setShow(false)}
-                      // onMouseLeave={() => setShow(true)}
+                      onMouseEnter={() => setShow(false)}
+                      onMouseLeave={() => setShow(true)}
                       onClick={() => {
                         if (count === 1) {
                           setCount(2);
@@ -75,8 +77,8 @@ function Project() {
                     </button>
                     <button
                       className="absolute left-0 z-50 ml-2"
-                      // onMouseEnter={() => setShow(false)}
-                      // onMouseLeave={() => setShow(true)}
+                      onMouseEnter={() => setShow(false)}
+                      onMouseLeave={() => setShow(true)}
                       onClick={() => {
                         if (count === 2) {
                           setCount(1);
@@ -87,6 +89,22 @@ function Project() {
                     >
                       &#10094;
                     </button>
+                    <div
+                      className={`backdrop-blur-[2px] transition-opacity duration-300 ease-in-out bg-white/30 w-full drop-shadow-sm h-full absolute flex justify-center items-center z-10 ${
+                        show ? "opacity-100" : "opacity-0"
+                      } text-lg sm:text-2xl text-black text-center kanit font-semibold`}
+                    >
+                      <div className="p-10">
+                        <span className="text-[#4C40F7]">{data.name}</span>
+                        <br />
+                        <p className="text-md sm:text-xl md:text-2xl">
+                          {data.tech}
+                        </p>
+                        <button className="bg-[#4C40F7] hover:bg-[#4C40F7]/90 text-white rounded-md p-2 text-sm sm:text-xl md:px-4">
+                          <a href={data.link}>Live Preview</a>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   " "
