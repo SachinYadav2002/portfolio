@@ -6,17 +6,17 @@ import project2 from "../skills/pro2.png";
 const project = [
   {
     id: 1,
-    img: project1,
-    name: "Stock Smart",
-    tech: "Next Js,Typescript,Tailwind CSS, Node Js,Mongo Db",
-    link: "https://stock-smart-next-js.vercel.app/",
-  },
-  {
-    id: 2,
     img: project2,
     name: "Headphone",
     tech: "React Js,Tailwind CSS",
     link: "https://headphone-six-sable.vercel.app/",
+  },
+  {
+    id: 2,
+    img: project1,
+    name: "Stock Smart",
+    tech: "Next Js,Typescript,Tailwind CSS, Node Js,Mongo Db",
+    link: "https://stock-smart-next-js.vercel.app/",
   },
 ];
 function Project() {

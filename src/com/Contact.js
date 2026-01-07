@@ -32,7 +32,7 @@ function Contact() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <button className="mt-4 p-4 bg-[#4C40F7] rounded-2xl text-white flex">
+          <button className="flex p-4 m-2 bg-gradient-65 from-cyan-400 to-blue-700 md:text-2xl rounded-2xl hover:scale-110 duration-6">
             Resume&nbsp;
             <img src={Download} alt="Download resume" className="w-6 h-6" />
           </button>
