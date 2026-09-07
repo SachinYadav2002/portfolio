@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Download, FileText, ArrowRight, MapPin, Mail, Phone, 
   Linkedin, Github
@@ -13,6 +13,14 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenResume, onExploreProjects, onContactClick }) => {
+  const [avatarSrc] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sachin_avatar_custom');
+      if (saved) return saved;
+    }
+    return '/sachin-face.jpg';
+  });
+
   return (
     <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-200">
       {/* Subtle Background Glows */}
@@ -144,21 +152,26 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onExploreProjects, onC
                 </div>
               </div>
 
-              {/* Circular Avatar Photo Display (Rounded Full with Face Close-Up) */}
+              {/* Circular Avatar Photo Display (Exact Circle Matching image.png) */}
               <div className="relative py-2 flex flex-col items-center justify-center">
-                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full p-1.5 bg-gradient-to-tr from-purple-700 via-indigo-600 to-emerald-500 shadow-xl shadow-indigo-500/15 group">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-black ring-4 ring-white dark:ring-slate-900 shadow-inner">
+                {/* Outer Circular Gradient Frame */}
+                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full p-[3.5px] bg-gradient-to-tr from-purple-700 via-indigo-600 to-cyan-400 shadow-2xl shadow-indigo-500/25 group transition-all duration-300 hover:shadow-cyan-500/30">
+                  {/* Inner Dark Circular Mask */}
+                  <div className="w-full h-full rounded-full overflow-hidden bg-slate-950 ring-4 ring-white dark:ring-slate-900 shadow-inner relative">
                     <img
                       id="hero-profile-img"
-                      src="/sachin-face.jpg"
+                      src={avatarSrc}
                       alt="Sachin Yadav - Full Stack MERN Developer"
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-center rounded-full transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.src = '/sachin-yadav.jpg';
+                      }}
                     />
                   </div>
 
-                  {/* Available for hire status pulse badge */}
-                  <div className="absolute bottom-2 right-3 p-1.5 rounded-full bg-white dark:bg-slate-900 shadow-md ring-2 ring-emerald-500/40 z-10">
+                  {/* Online Status Pulse Badge (Bottom-Right matching image.png) */}
+                  <div className="absolute bottom-2 right-3 p-1.5 rounded-full bg-white dark:bg-slate-900 shadow-md ring-2 ring-emerald-500/50 z-10">
                     <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-emerald-400 animate-pulse" title="Available for hire" />
                   </div>
                 </div>

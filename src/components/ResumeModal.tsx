@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Download, Printer, Copy, Check, ExternalLink, MapPin, Mail, Phone, Linkedin, Github, Globe } from 'lucide-react';
 import { PERSONAL_INFO, WORK_EXPERIENCE, EDUCATION, SKILL_CATEGORIES, LANGUAGES, INTERESTS } from '../data/portfolioData';
-import { downloadResumePdf } from '../utils/downloadResume';
+import { downloadResumePdf, viewResumePdf } from '../utils/downloadResume';
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -117,17 +117,16 @@ Interests: Modern Web Frameworks, Technical Reading, Kabaddi`;
               <span>Download PDF</span>
             </a>
 
-            <a
+            <button
               id="resume-open-tab-btn"
-              href="/api/resume/view"
-              target="_blank"
-              rel="noopener noreferrer"
+              type="button"
+              onClick={viewResumePdf}
               className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors cursor-pointer"
               title="Open PDF directly in browser tab"
             >
               <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
               <span>Open PDF</span>
-            </a>
+            </button>
 
             <button
               id="resume-close-btn"
@@ -301,14 +300,13 @@ Interests: Modern Web Frameworks, Technical Reading, Kabaddi`;
         <div className="px-6 py-3 bg-slate-950 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2 shrink-0">
           <span>Official resume of Sachin Yadav, updated for 2025–2026.</span>
           <div className="flex items-center gap-4">
-            <a 
-              href="/api/resume/view" 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <button 
+              type="button"
+              onClick={viewResumePdf}
               className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
             >
               <ExternalLink className="w-3.5 h-3.5 text-cyan-400" /> Open in New Tab
-            </a>
+            </button>
             <a 
               href="/api/resume/download" 
               download="Sachin_Yadav_Resume.pdf"

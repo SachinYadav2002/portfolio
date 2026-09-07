@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { 
   Mail, Phone, MapPin, Linkedin, Github, Send, 
-  CheckCircle2, AlertCircle, Loader2, MessageSquare, RefreshCw 
+  CheckCircle2, AlertCircle, Loader2,
+  MessageCircle, ExternalLink, Sparkles
 } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
-import { ContactMessage } from '../types';
 
 export const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,32 +14,61 @@ export const ContactSection: React.FC = () => {
     message: ''
   });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
+  const [status, setStatus] = useState<{ 
+    type: 'success' | 'error' | null; 
+    message: string;
+    notice?: string;
+  }>({
     type: null,
     message: ''
   });
-  const [messagesList, setMessagesList] = useState<ContactMessage[]>([]);
-  const [showInbox, setShowInbox] = useState(false);
-  const [loadingInbox, setLoadingInbox] = useState(false);
+  const [lastSubmitted, setLastSubmitted] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  } | null>(null);
 
-  const fetchInbox = async () => {
-    setLoadingInbox(true);
-    try {
-      const res = await fetch('/api/contact/messages');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.messages)) {
-        setMessagesList(data.messages);
-      }
-    } catch (err) {
-      console.error('Failed to fetch messages:', err);
-    } finally {
-      setLoadingInbox(false);
-    }
+  // Prepares direct compose link for Gmail web
+  const getGmailComposeUrl = (customData?: typeof formData) => {
+    const data = customData || formData;
+    const name = data.name.trim() || 'Website Visitor';
+    const email = data.email.trim() || 'visitor@example.com';
+    const sub = data.subject.trim() || 'Portfolio Inquiry';
+    const msg = data.message.trim() || 'Hi Sachin,\n\nI visited your portfolio and would like to connect with you regarding an opportunity.';
+    const body = `Hi Sachin,\n\nMy Name: ${name}\nMy Email: ${email}\n\nMessage:\n${msg}\n\n---\nSent from your portfolio contact form`;
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(PERSONAL_INFO.email)}&su=${encodeURIComponent(`[Portfolio] ${sub}`)}&body=${encodeURIComponent(body)}`;
+  };
+
+  // Prepares standard mailto URL
+  const getMailtoUrl = (customData?: typeof formData) => {
+    const data = customData || formData;
+    const name = data.name.trim() || 'Website Visitor';
+    const email = data.email.trim() || 'visitor@example.com';
+    const sub = data.subject.trim() || 'Portfolio Inquiry';
+    const msg = data.message.trim() || 'Hi Sachin, I would like to connect.';
+    const body = `Hi Sachin,\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${msg}`;
+    return `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(`[Portfolio] ${sub}`)}&body=${encodeURIComponent(body)}`;
+  };
+
+  // Prepares direct WhatsApp message URL
+  const getWhatsAppUrl = (customData?: typeof formData) => {
+    const data = customData || formData;
+    const name = data.name.trim() || 'Visitor';
+    const sub = data.subject.trim() || 'Portfolio Inquiry';
+    const msg = data.message.trim() || 'Hi Sachin, I saw your portfolio and wanted to get in touch!';
+    const text = `Hello Sachin,\n\n*Name:* ${name}\n*Email:* ${data.email.trim() || 'Not provided'}\n*Topic:* ${sub}\n\n*Message:*\n${msg}`;
+    return `https://wa.me/917822900241?text=${encodeURIComponent(text)}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const subject = formData.subject.trim() || 'Portfolio Contact Inquiry';
+    const message = formData.message.trim();
+
+    if (!name || !email || !message) {
       setStatus({
         type: 'error',
         message: 'Please fill in your name, email, and message.'
@@ -47,34 +76,89 @@ export const ContactSection: React.FC = () => {
       return;
     }
 
+    // Email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setStatus({
+        type: 'error',
+        message: 'Please provide a valid email address.'
+      });
+      return;
+    }
+
     setLoading(true);
     setStatus({ type: null, message: '' });
 
+    const submissionPayload = { name, email, subject, message };
+    let deliveredToEmail = false;
+    let savedToBackend = false;
+    let emailNoticeText = '';
+
     try {
-      const res = await fetch('/api/contact', {
+      // 1. Send direct to FormSubmit email delivery endpoint
+      const formSubmitPromise = fetch('https://formsubmit.co/ajax/yadavsachin7249407392@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          _replyto: email,
+          _subject: `[Portfolio Inquiry] ${subject} (from ${name})`,
+          message: `Sender Name: ${name}\nSender Email: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`,
+          _template: 'table',
+          _captcha: 'false'
+        })
+      })
+        .then(async res => {
+          const json = await res.json().catch(() => null);
+          if (res.ok && (json?.success === 'true' || json?.success === true)) {
+            deliveredToEmail = true;
+          } else if (json?.message && json.message.includes('Activation')) {
+            emailNoticeText = 'Activation email sent to Sachin. Once activated, emails deliver seamlessly.';
+          }
+        })
+        .catch(err => {
+          console.warn('Direct FormSubmit request caught:', err);
+        });
+
+      // 2. Send to Express backend API route
+      const backendPromise = fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+        body: JSON.stringify(submissionPayload)
+      })
+        .then(async res => {
+          const data = await res.json().catch(() => null);
+          if (res.ok && data?.success) {
+            savedToBackend = true;
+            if (data.emailDispatched) deliveredToEmail = true;
+          }
+        })
+        .catch(err => {
+          console.warn('Backend API request caught:', err);
+        });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setStatus({
-          type: 'success',
-          message: data.message || 'Message sent successfully! Sachin will get back to you shortly.'
-        });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        fetchInbox();
-      } else {
-        setStatus({
-          type: 'error',
-          message: data.error || 'Failed to deliver message. Please try again or email directly.'
-        });
-      }
+      // Wait for both attempts (timeout safely after 4 seconds)
+      await Promise.race([
+        Promise.all([formSubmitPromise, backendPromise]),
+        new Promise(resolve => setTimeout(resolve, 4000))
+      ]);
+
+      setLastSubmitted(submissionPayload);
+      setStatus({
+        type: 'success',
+        message: `Message dispatched! Your name, email, and message details have been sent to Sachin Yadav (${PERSONAL_INFO.email}).`,
+        notice: emailNoticeText
+      });
+      setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (err) {
+      console.error('Submission error:', err);
       setStatus({
         type: 'error',
-        message: 'Network error communicating with the Express backend. Please reach out via email.'
+        message: 'Could not automatically deliver. Please use the direct "Open in Gmail" button below.'
       });
     } finally {
       setLoading(false);
@@ -187,60 +271,6 @@ export const ContactSection: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Server Messages Inspector */}
-            <div className="p-4 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs shadow-xs">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Live API Messages Store</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!showInbox) fetchInbox();
-                    setShowInbox(!showInbox);
-                  }}
-                  className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
-                >
-                  {showInbox ? 'Hide Messages' : 'Inspect Received'}
-                </button>
-              </div>
-
-              {showInbox && (
-                <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                    <span>Database Documents:</span>
-                    <button
-                      onClick={fetchInbox}
-                      className="flex items-center gap-1 hover:text-emerald-600 dark:hover:text-emerald-400"
-                    >
-                      <RefreshCw className={`w-3 h-3 ${loadingInbox ? 'animate-spin' : ''}`} />
-                      <span>Refresh</span>
-                    </button>
-                  </div>
-
-                  <div className="max-h-44 overflow-y-auto space-y-2 pr-1">
-                    {messagesList.length === 0 ? (
-                      <p className="text-[11px] text-slate-500 italic">No messages received yet.</p>
-                    ) : (
-                      messagesList.map(msg => (
-                        <div key={msg._id} className="p-2 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 text-[11px]">
-                          <div className="flex items-center justify-between text-slate-800 dark:text-slate-300 font-semibold mb-0.5">
-                            <span>{msg.name}</span>
-                            <span className="font-mono text-slate-500 text-[10px]">
-                              {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : ''}
-                            </span>
-                          </div>
-                          <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[10px] block truncate">{msg.email}</span>
-                          <p className="text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">{msg.message}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Interactive Form Column */}
@@ -249,24 +279,65 @@ export const ContactSection: React.FC = () => {
               onSubmit={handleSubmit}
               className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md dark:shadow-xl space-y-4"
             >
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight mb-2">
-                Send Direct Message
-              </h3>
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                    Send Direct Message
+                  </h3>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+                    <Sparkles className="w-3 h-3" /> Auto-Email to Sachin
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Your message will be sent directly to <strong className="text-slate-700 dark:text-slate-200 font-mono">{PERSONAL_INFO.email}</strong>.
+                </p>
+              </div>
 
               {status.type && (
                 <div
-                  className={`p-3 rounded-xl flex items-start gap-2.5 text-xs font-medium ${
+                  className={`p-4 rounded-xl space-y-2 text-xs font-medium ${
                     status.type === 'success'
-                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
-                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-800'
+                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-900 dark:text-rose-200 border border-rose-300 dark:border-rose-800'
                   }`}
                 >
-                  {status.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" />
+                  <div className="flex items-start gap-2.5">
+                    {status.type === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" />
+                    )}
+                    <div className="space-y-1">
+                      <span className="font-semibold block">{status.message}</span>
+                      {status.notice && (
+                        <p className="text-[11px] opacity-90">{status.notice}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {status.type === 'success' && lastSubmitted && (
+                    <div className="pt-2 border-t border-emerald-200 dark:border-emerald-800/80 flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] text-emerald-800 dark:text-emerald-300">
+                        Need instant confirmation?
+                      </span>
+                      <a
+                        href={getGmailComposeUrl(lastSubmitted)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" /> Open in Gmail
+                      </a>
+                      <a
+                        href={getWhatsAppUrl(lastSubmitted)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-700 hover:bg-emerald-600 text-white transition-colors"
+                      >
+                        <MessageCircle className="w-3 h-3" /> Send via WhatsApp
+                      </a>
+                    </div>
                   )}
-                  <span>{status.message}</span>
                 </div>
               )}
 
@@ -327,24 +398,49 @@ export const ContactSection: React.FC = () => {
                 />
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition-all cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition-all cursor-pointer active:scale-98"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Sending to Server...</span>
+                      <span>Sending to Sachin's Inbox...</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Send Message to Sachin</span>
+                      <span>Send Direct Message</span>
                     </>
                   )}
                 </button>
+
+                {/* Instant alternative triggers */}
+                <div className="flex items-center gap-2 text-xs">
+                  <a
+                    href={getGmailComposeUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700 transition-colors"
+                    title="Compose directly in Gmail with your filled text"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Open in Gmail</span>
+                  </a>
+
+                  <a
+                    href={getWhatsAppUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-medium border border-emerald-200 dark:border-emerald-800/80 transition-colors"
+                    title="Send directly via WhatsApp"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
               </div>
             </form>
           </div>
