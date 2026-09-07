@@ -4,6 +4,7 @@ import {
   Linkedin, Github
 } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
+import { downloadResumePdf } from '../utils/downloadResume';
 
 interface HeroProps {
   onOpenResume: () => void;
@@ -112,11 +113,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onExploreProjects, onC
               <a
                 id="hero-download-resume-btn"
                 href="/api/resume/download"
-                download="Sachin_Yadav_Full_Stack_Resume.txt"
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-all cursor-pointer shadow-xs"
+                download="Sachin_Yadav_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={downloadResumePdf}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-sm border border-slate-300 dark:border-slate-700 transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Download CV</span>
+                <span>Download CV (PDF)</span>
               </a>
             </div>
           </div>
@@ -140,25 +144,31 @@ export const Hero: React.FC<HeroProps> = ({ onOpenResume, onExploreProjects, onC
                 </div>
               </div>
 
-              {/* Photo Display with Theme-Adaptive Background */}
-              <div className="relative w-full aspect-square max-w-[340px] mx-auto rounded-xl overflow-hidden bg-slate-100 dark:bg-black border border-slate-200 dark:border-slate-800 shadow-md dark:shadow-2xl flex items-center justify-center group transition-colors duration-200">
-                <img
-                  id="hero-profile-img"
-                  src="/sachin-photo.png"
-                  alt="Sachin Yadav - Full Stack MERN Developer"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                />
+              {/* Circular Avatar Photo Display (Rounded Full with Face Close-Up) */}
+              <div className="relative py-2 flex flex-col items-center justify-center">
+                <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-full p-1.5 bg-gradient-to-tr from-purple-700 via-indigo-600 to-emerald-500 shadow-xl shadow-indigo-500/15 group">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-black ring-4 ring-white dark:ring-slate-900 shadow-inner">
+                    <img
+                      id="hero-profile-img"
+                      src="/sachin-face.jpg"
+                      alt="Sachin Yadav - Full Stack MERN Developer"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-center rounded-full transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
 
-                {/* Bottom theme-adaptive studio gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-200/60 dark:from-black/80 via-transparent to-transparent opacity-60 pointer-events-none transition-colors duration-200" />
+                  {/* Available for hire status pulse badge */}
+                  <div className="absolute bottom-2 right-3 p-1.5 rounded-full bg-white dark:bg-slate-900 shadow-md ring-2 ring-emerald-500/40 z-10">
+                    <div className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-2 ring-emerald-400 animate-pulse" title="Available for hire" />
+                  </div>
+                </div>
 
-                {/* Permanent Photo Identification Badge */}
-                <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between">
-                  <span className="px-2.5 py-1 rounded-md bg-white/90 dark:bg-black/80 text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-800 backdrop-blur-md shadow-xs">
+                {/* Location & Name badges */}
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-mono font-semibold text-emerald-600 dark:text-emerald-400 border border-slate-200 dark:border-slate-700">
                     Sachin Yadav
                   </span>
-                  <span className="px-2 py-1 rounded-md bg-white/90 dark:bg-black/80 text-[10px] font-mono text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 backdrop-blur-md shadow-xs">
+                  <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-mono text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                     Surat, India
                   </span>
                 </div>

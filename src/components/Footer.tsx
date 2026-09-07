@@ -1,6 +1,7 @@
 import React from 'react';
 import { Code2, Download, FileText, ArrowUp, Github, Linkedin, Mail } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
+import { downloadResumePdf } from '../utils/downloadResume';
 
 interface FooterProps {
   onOpenResume: () => void;
@@ -45,8 +46,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenResume }) => {
             </button>
             <a
               href="/api/resume/download"
-              download="Sachin_Yadav_Full_Stack_Resume.txt"
-              className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold"
+              download="Sachin_Yadav_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={downloadResumePdf}
+              className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold cursor-pointer"
+              title="Download Official Resume (PDF)"
             >
               <Download className="w-3 h-3" />
               <span>Download CV</span>

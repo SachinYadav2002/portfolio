@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, FileText, Menu, X, Code2, Send, Sun, Moon } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolioData';
 import { useTheme } from '../context/ThemeContext';
+import { downloadResumePdf } from '../utils/downloadResume';
 
 interface NavbarProps {
   onOpenResume: () => void;
@@ -37,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume, onOpenContact }) =
           id="nav-logo-link"
           className="flex items-center gap-2.5 text-slate-900 dark:text-slate-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors group"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-sm tracking-tight shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center text-slate-950 font-black text-sm tracking-tight shadow-md shadow-emerald-500/20 ring-1 ring-emerald-400/30 group-hover:scale-105 transition-transform shrink-0">
             SY
           </div>
           <div>
@@ -92,9 +93,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume, onOpenContact }) =
           <a
             id="nav-download-resume-direct-link"
             href="/api/resume/download"
-            download="Sachin_Yadav_Full_Stack_Resume.txt"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-sm shadow-emerald-500/20 transition-all cursor-pointer"
-            title="Direct Download Resume"
+            download="Sachin_Yadav_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={downloadResumePdf}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-sm shadow-emerald-500/20 transition-all cursor-pointer active:scale-95"
+            title="Direct Download Resume PDF"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Download CV</span>
@@ -168,11 +172,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResume, onOpenContact }) =
             </button>
             <a
               href="/api/resume/download"
-              download="Sachin_Yadav_Full_Stack_Resume.txt"
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300"
+              download="Sachin_Yadav_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                downloadResumePdf(e);
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all cursor-pointer active:scale-95"
             >
               <Download className="w-4 h-4" />
-              <span>Download Resume (.txt/PDF)</span>
+              <span>Download CV (PDF)</span>
             </a>
           </div>
         </div>

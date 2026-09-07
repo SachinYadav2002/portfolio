@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Download, Printer, Copy, Check, ExternalLink, MapPin, Mail, Phone, Linkedin, Github, Globe } from 'lucide-react';
 import { PERSONAL_INFO, WORK_EXPERIENCE, EDUCATION, SKILL_CATEGORIES, LANGUAGES, INTERESTS } from '../data/portfolioData';
+import { downloadResumePdf } from '../utils/downloadResume';
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -20,7 +21,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => 
     const textResume = `SACHIN YADAV
 FULL STACK DEVELOPER
 Surat, Gujarat, India • +91 7822900241 • yadavsachin7249407392@gmail.com
-LinkedIn: linkedin.com/in/sachin-yadav-20a79b231 • GitHub: github.com/SachinYadav2002 • Portfolio: portfolio-six-phi-joylbsgqdg.vercel.app
+LinkedIn: linkedin.com/in/sachin-yadav-20a79b231 • GitHub: github.com/SachinYadav2002 • Portfolio: sachinyadav2002.vercel.app
 
 PROFESSIONAL SUMMARY
 Results-driven Full Stack Developer with expertise in building scalable, high-performance web applications using React.js, Next.js, TypeScript, Node.js, Express.js, and MongoDB. Proven track record in transforming Figma UI/UX designs into modular components, engineering RESTful APIs, and optimizing web performance. Skilled in clean code principles, state management, and modern responsive design.
@@ -33,7 +34,7 @@ Tools & Methods: Git, GitHub, Figma, Webpack, Performance Optimization, Agile/Sc
 
 WORK EXPERIENCE
 Front End Developer (02/2025 – 08/2026)
-Suvya Web - Surat, Gujarat
+Suvya Web — Surat, Gujarat
 • Engineered responsive, cross-browser web interfaces using React.js and Next.js, delivering smooth user experiences across mobile and desktop devices.
 • Translated Figma/UI mockups into high-quality, reusable components leveraging Tailwind CSS, SCSS, and semantic HTML5.
 • Developed and integrated RESTful APIs using Express.js and MongoDB, streamlining client-server data flow and system responsiveness.
@@ -42,7 +43,7 @@ Suvya Web - Surat, Gujarat
 • Utilized Git and GitHub for version control, conducting peer code reviews and managing structured workflow branching strategies.
 
 KEY PROJECTS
-Electro – E-Commerce Platform (Next.js | TypeScript | Tailwind CSS)
+Electro-E-Commerce Platform (Next.js | TypeScript | Tailwind CSS)
 • Architected a modern e-commerce application using Next.js server-side rendering for optimal page speed and SEO ranking.
 • Implemented strict TypeScript typing across all components, reducing production defects and improving code maintainability.
 • Designed fully adaptive layout components for seamlessly consistent user experiences across mobile, tablet, and desktop screens.
@@ -52,12 +53,12 @@ Headphone Showcase Application (React.js | CSS3)
 
 EDUCATION
 BCA (Bachelor of Computer Applications) - Completed: 02/2024
-C D Jain College of Commerce - Shrirampur, Maharashtra
+C D Jain College of Commerce — Shrirampur, Maharashtra
 TY BCA: 9.04 CGPA | SY BCA: 8.86 CGPA | FY BCA: 8.33 CGPA
 
 LANGUAGES & INTERESTS
-Languages: English (Professional) | Hindi (Native / Full Professional) | Marathi (Working Proficiency)
-Interests: Exploring Modern Web Frameworks, Technical Reading, Kabaddi`;
+Languages: English (Professional) | Hindi (Native) | Marathi (Working)
+Interests: Modern Web Frameworks, Technical Reading, Kabaddi`;
 
     navigator.clipboard.writeText(textResume);
     setCopied(true);
@@ -106,11 +107,26 @@ Interests: Exploring Modern Web Frameworks, Technical Reading, Kabaddi`;
             <a
               id="resume-download-btn"
               href="/api/resume/download"
-              download="Sachin_Yadav_Full_Stack_Resume.txt"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-sm transition-colors cursor-pointer"
+              download="Sachin_Yadav_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={downloadResumePdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-slate-950 bg-emerald-400 hover:bg-emerald-300 shadow-sm transition-colors cursor-pointer active:scale-95"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download File</span>
+              <span>Download PDF</span>
+            </a>
+
+            <a
+              id="resume-open-tab-btn"
+              href="/api/resume/view"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors cursor-pointer"
+              title="Open PDF directly in browser tab"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Open PDF</span>
             </a>
 
             <button
@@ -157,7 +173,7 @@ Interests: Exploring Modern Web Frameworks, Technical Reading, Kabaddi`;
               </a>
               <span>•</span>
               <a href={PERSONAL_INFO.portfolioUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:underline">
-                <Globe className="w-3 h-3" /> portfolio-six-phi-joylbsgqdg.vercel.app
+                <Globe className="w-3 h-3" /> sachinyadav2002.vercel.app
               </a>
             </div>
           </div>
@@ -284,13 +300,24 @@ Interests: Exploring Modern Web Frameworks, Technical Reading, Kabaddi`;
         {/* Footer info in modal */}
         <div className="px-6 py-3 bg-slate-950 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2 shrink-0">
           <span>Official resume of Sachin Yadav, updated for 2025–2026.</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <a 
+              href="/api/resume/view" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-cyan-400" /> Open in New Tab
+            </a>
             <a 
               href="/api/resume/download" 
-              download="Sachin_Yadav_Full_Stack_Resume.txt"
-              className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1"
+              download="Sachin_Yadav_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={downloadResumePdf}
+              className="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 cursor-pointer active:scale-95"
             >
-              <Download className="w-3.5 h-3.5" /> Download Direct File
+              <Download className="w-3.5 h-3.5" /> Download PDF Resume
             </a>
           </div>
         </div>

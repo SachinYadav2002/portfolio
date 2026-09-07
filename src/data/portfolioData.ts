@@ -10,7 +10,7 @@ export const PERSONAL_INFO = {
   email: "yadavsachin7249407392@gmail.com",
   linkedin: "https://linkedin.com/in/sachin-yadav-20a79b231",
   github: "https://github.com/SachinYadav2002",
-  portfolioUrl: "https://portfolio-six-phi-joylbsgqdg.vercel.app",
+  portfolioUrl: "https://sachinyadav2002.vercel.app",
   stats: [
     { label: "CGPA (TY BCA)", value: "9.04" },
     { label: "Frontend Speedup", value: "30%" },
@@ -35,7 +35,7 @@ export const PROJECTS: Project[] = [
       "Express.js & MongoDB backed product inventory and shopping session management"
     ],
     githubUrl: "https://github.com/SachinYadav2002/electro-ecommerce",
-    liveDemoUrl: "https://portfolio-six-phi-joylbsgqdg.vercel.app",
+    liveDemoUrl: "https://sachinyadav2002.vercel.app",
     featured: true,
     demoType: "ecommerce",
     metrics: "Sub-second load times & 100% type safety"
@@ -55,7 +55,7 @@ export const PROJECTS: Project[] = [
       "Audio frequency visualizer simulating real-time acoustic tuning (Bass, Vocal, Studio, Spatial)"
     ],
     githubUrl: "https://github.com/SachinYadav2002/headphone-showcase",
-    liveDemoUrl: "https://portfolio-six-phi-joylbsgqdg.vercel.app",
+    liveDemoUrl: "https://sachinyadav2002.vercel.app",
     featured: true,
     demoType: "headphone",
     metrics: "60 FPS dynamic transitions"
@@ -75,7 +75,7 @@ export const PROJECTS: Project[] = [
       "Clean decoupled client-server architecture with error boundaries and optimistic updates"
     ],
     githubUrl: "https://github.com/SachinYadav2002/devsprint-mern-kanban",
-    liveDemoUrl: "https://portfolio-six-phi-joylbsgqdg.vercel.app",
+    liveDemoUrl: "https://sachinyadav2002.vercel.app",
     featured: true,
     demoType: "kanban",
     metrics: "Full CRUD & Real-time status sync"
@@ -95,7 +95,7 @@ export const PROJECTS: Project[] = [
       "Search and filter by programming language (TypeScript, React, Node.js, MongoDB)"
     ],
     githubUrl: "https://github.com/SachinYadav2002/codecraft-snippets",
-    liveDemoUrl: "https://portfolio-six-phi-joylbsgqdg.vercel.app",
+    liveDemoUrl: "https://sachinyadav2002.vercel.app",
     featured: false,
     demoType: "codecraft",
     metrics: "MERN REST API integration"
